@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="new.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="todo-container">
+        <div class="todo-app">
+            <h2 style="font-size: 20px; font-weight: bold;">
+                Todo app
+            </h2>
+            <form action="#" id="Form" style="padding-top: 10px ;">
+                <input type="text"  class="form-input" placeholder="what do you want to add">
+            </form>
+
+            <ul class="todo-list">
+                <li class="todo-item-container">
+                    <div class="todo-item">
+                        <input type="checkbox" class="todo-checkbox" id="">
+                        <span class="todo-item-label">Finish Js</span>
+                    </div>
+                    <button class="close-button">&times;</button>
+                </li>
+            </ul>
+            <div class="remaining-container">
+                <span><span id="itemsRemaining">3</span> items remaining</span> 
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+    const App = {
+            init() {
+            this.selectElements();
+            this.itemsLeft();
+            this.listenForEvents();
+            },
+
+            selectElements() {
+            this.Form = document.querySelector('#Form');
+            this.input = document.querySelector('.form-input');
+            this.todoItem = document.querySelector('.todo-item-container');
+            this.todoList = document.querySelector('.todo-list');
+            this.itemsRemaining = document.querySelector('#itemsRemaining');
+            },
+
+            itemsLeft() {
+            const todoItemLabels = document.querySelectorAll('.todo-item-label');
+
+            this.itemsRemaining.textContent = Array.from(todoItemLabels).filter(todoItemLabel => {
+                return !todoItemLabel.classList.contains('line-through');
+            }).length;
+            },
+
+            listenForEvents() {
+            this.Form.addEventListener('submit', this.addTodo.bind(this));
+            this.todoList.addEventListener('click', this.checkOrDeleteTodo.bind(this));
+            },
+
+            checkOrDeleteTodo(event) {
+            if (event.target.classList.contains('todo-checkbox')) {
+                this.checkTodo(event.target);
+            }
+
+            if (event.target.classList.contains('close-button')) {
+                this.deleteTodo(event.target);
+            }
+            },
+
+            checkTodo(e) {
+            const todoItemToComplete = e.nextElementSibling;
+            todoItemToComplete.classList.toggle('line-through');
+            this.itemsLeft();
+            },
+
+            deleteTodo(e) {
+            const todoItemToDelete = e.closest('.todo-item-container');
+            todoItemToDelete.remove();
+            this.itemsLeft();
+            },
+            
+            addTodo(e) {
+            e.preventDefault();
+
+            const newTodoItem = this.todoItem.cloneNode(true);
+            const todoItemLabel = newTodoItem.querySelector('.todo-item-label');
+
+            todoItemLabel.textContent = this.input.value;
+            todoItemLabel.classList.remove('line-through');
+            newTodoItem.querySelector('.todo-checkbox').checked = false;
+
+            this.todoList.append(newTodoItem);
+
+            this.input.value = '';
+            this.itemsLeft();
+            }
+        };
+
+        App.init();
+    </script>
+
+</body>
+</html>
